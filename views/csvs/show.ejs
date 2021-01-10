@@ -1,0 +1,16 @@
+<div>
+    <div class="m-3"><span class="fw-bold">File Name</span>= <%= file.name %></div>
+    <div class="my-3">
+        <span class="fw-bold m-2">Upload Date</span>=
+        <%= new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: '2-digit',  hour: 'numeric', minute: 'numeric'}).format(file.date)  %>
+    </div>
+    <h4>Records:</h4>
+    <ul class="list-group">
+        <% for( var record  of file.records) { %>
+        <li class="list-group-item"><span class="fw-bold">Username:</span> <%= record.username %> - <span class="fw-bold"><%= record.password %></span></li>
+        <% } %>
+    </ul>
+    <form action="/csv_files/delete/<%= file._id %>" method="POST">
+        <button class="btn btn-danger m-5" type="submit">Delete</button>
+    </form>
+</div>

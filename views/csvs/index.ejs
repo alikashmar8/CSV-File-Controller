@@ -1,0 +1,12 @@
+<h1 class="font-weight-bold">All csv files:</h1>
+<br>
+<div>
+    <ul class="list-group">
+        <% for( var file  of files) { %>
+        <li class="list-group-item"><a href="/csv_files/<%= file._id %>"> <%= file.name %> </a><span class="d-flex justify-content-between align-items-center">Added : <%= new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: '2-digit',  hour: 'numeric', minute: 'numeric'}).format(file.date)  %></span>
+        </li>
+        <% } %>
+    </ul>
+</div>
+<br>
+<a class="btn btn-dark" href="/csv_files/create">Upload new file</a>
