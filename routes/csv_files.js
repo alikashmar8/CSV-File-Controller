@@ -4,7 +4,6 @@ const csvParser = require('csv-parser')
 const fs = require('fs')
 const mongoose = require('mongoose')
 var ObjectId = require('mongodb').ObjectID;
-const FileType = require('file-type');
 const File = require("../models/file.model")
 
 
@@ -17,31 +16,18 @@ const db = mongoose.connection
 db.on('error', error => console.error(error))
 db.once('open', () => console.log('Connection To Mongoose Successful'))
 
-var results = []
 
 
-//all csv files
 router.get('/', async (req, res) => {
     try {
         const files = await File.find();
-
         res.status(200).json(files);
-        // uncomment follwing line to see data in view (comment above line too)
-        // res.render("csvs/index", {files: files})
-
     } catch (e) {
-        res.json({ message: e })
+        res.status(500).json({ message: e })
     }
 })
 
 
-//redirect to create view
-router.get('/create', (req, res) => {
-    res.render("csvs/create")
-})
-
-
-//store file
 router.post('/store', async (req, res) => {
     results = [];
     await fs.createReadStream(req.body.csvFile).pipe(csvParser({}))
@@ -54,42 +40,32 @@ router.post('/store', async (req, res) => {
             })
             await file.save().then(data => {
                 res.status(201).json(data);
-                // uncomment follwing line to see data in view (comment above line too)
-                // res.redirect('/csv_files')
             }).catch(error => {
                 res.status(500).json({ message: error })
             });
 
         }).catch(e => {
             res.status(400).json({ message: e })
-        })
-
-
-})
-
-// show file details
-router.get('/:id', (req, res) => {
-    console.log("show")
-    var data = {};
-    db.collection("files").findOne({ _id: ObjectId(req.params.id) }).then(function (resp) {
-        data = resp
-        res.render("csvs/show", { file: data })
-
-    });
-})
-
-
-// delete file
-router.post('/delete/:id', (req, res) => {
-    console.log("delete")
-    console.log(req.params.id)
-    db.collection("files").deleteOne({ _id: ObjectId(req.params.id) })
-        .then(function (resp) {
-            console.log("delete")
-            console.log(resp)
-            res.redirect('/csv_files')
-
         });
+})
+
+router.get('/:id', async (req, res) => {
+    try {
+        const file = await File.findOne({ _id: ObjectId(req.params.id) });
+        res.status(200).json(file);
+    } catch (e) {
+        res.status(500).json({ message: r })
+    }
+})
+
+
+router.delete('/:id', async (req, res) => {
+    try {
+        const removeFile = await File.remove({ _id: ObjectId(req.params.id) });
+        res.status(200).json(removeFile);
+    } catch (e) {
+        res.status(500).json({ message: e })
+    }
 })
 
 module.exports = router
