@@ -17,13 +17,22 @@ db.on('error', error => console.error(error))
 db.once('open', () => console.log('Connection To Mongoose Successful'))
 
 
+const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': '*'
+}
+
+
 
 router.get('/', async (req, res) => {
     try {
         const files = await File.find();
-        res.status(200).json(files);
+        res.writeHead(200, headers);
+        res.end(JSON.stringify(files));
     } catch (e) {
-        res.status(500).json({ message: e })
+        res.writeHead(500, headers);
+        res.end(JSON.stringify(e));
     }
 })
 
@@ -39,22 +48,26 @@ router.post('/store', async (req, res) => {
                 records: results
             })
             await file.save().then(data => {
-                res.status(201).json(data);
+                res.writeHead(201, headers);
+                res.end(JSON.stringify(data));
             }).catch(error => {
                 res.status(500).json({ message: error })
             });
 
         }).catch(e => {
-            res.status(400).json({ message: e })
+            res.writeHead(500, headers);
+            res.end(JSON.stringify(e));
         });
 })
 
 router.get('/:id', async (req, res) => {
     try {
         const file = await File.findOne({ _id: ObjectId(req.params.id) });
-        res.status(200).json(file);
+        res.writeHead(200, headers);
+        res.end(JSON.stringify(file));
     } catch (e) {
-        res.status(500).json({ message: r })
+        res.writeHead(500, headers);
+        res.end(JSON.stringify(e));
     }
 })
 
@@ -62,9 +75,11 @@ router.get('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const removeFile = await File.remove({ _id: ObjectId(req.params.id) });
-        res.status(200).json(removeFile);
+        res.writeHead(200, headers);
+        res.end(JSON.stringify(removeFile));
     } catch (e) {
-        res.status(500).json({ message: e })
+        res.writeHead(500, headers);
+        res.end(JSON.stringify(e));
     }
 })
 
