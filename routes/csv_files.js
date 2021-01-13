@@ -55,7 +55,7 @@ router.post('/store', async (req, res) => {
             });
 
         }).catch(e => {
-            res.writeHead(500, headers);
+            res.writeHead(400, headers);
             res.end(JSON.stringify(e));
         });
 })
